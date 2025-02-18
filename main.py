@@ -1,26 +1,26 @@
 #Code for Raspberry Pi Pico
 import utime
 import machine
-from machine import I2C
-
-I2C_ADDR = 0x08 #I2C Address of NodeMCU
-data = "Some data to send" #Data to send to I2C device
+from machine import I2C,Pin
 
 def main():
+    led = machine.Pin(25, machine.Pin.OUT)
+    led.value(0)
+
+    I2C_ADDR = 0x05 #I2C Address of NodeMCU
+    data = "HELLO_NODEMCU" #Data to send to I2C device
+
+    i2c = I2C(0, sda=machine.Pin(8), scl=machine.Pin(9), freq=10000)
+    print(i2c)
     print("Initalizing I2C as Master")
-    try:
-        i2c = I2C(0, sda=machine.Pin(8), scl=machine.Pin(9), freq=10000)
-    except:
-        print("cannot connect")
-    
-    for _ in range(10):
-        try:
-            i2c.writeto(I2C_ADDR, data) #This line is responsible for sending data
-                                #the above function can be called multiple times, changing
-                                #the I2C_ADDR to transmit to various devices on the bus
-                                #also changing the data variable will change the data being transmitted 
-            utime.sleep_ms(50)
-        except Exception as e:
-            print(e)
+
+    while True:
+        i2c.writeto(I2C_ADDR, data) #This line is responsible for sending data to nodemcu 
+        a = i2c.readfrom(I2C_ADDR,10) #This line responsible for read data from Nodemcu
+        led.value(1)
+        print(a)
+        utime.sleep(0.1)
+        led.value(0)
+        utime.sleep(0.1)
 
 main()

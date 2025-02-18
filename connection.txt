@@ -1,0 +1,4 @@
+        Pico    Esp
+ground: 13      GND
+SCL:    GP8     D1
+SDA:    GP9     D2
